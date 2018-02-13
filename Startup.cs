@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using StrategyGame.Models;
+using Newtonsoft.Json;
 
 namespace StrategyGame
 {
@@ -25,7 +26,11 @@ namespace StrategyGame
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc()
+                    .AddJsonOptions(options =>
+                    {
+                        options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    });
             services.AddDbContext<GameModelContext>(options => options.UseNpgsql(
                 "Server=TheNorth;Host=localhost;Port=1337;Database=Winterfell;Username=postgres;Password=postgres"
             ));

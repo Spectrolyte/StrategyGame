@@ -5,6 +5,7 @@ namespace StrategyGame.Models
 {
     public abstract class Entity
     {
+        [Required]
         public Guid Id { get; set; }
         
         [Timestamp]
