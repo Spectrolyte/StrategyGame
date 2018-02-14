@@ -11,9 +11,10 @@ using System;
 namespace StrategyGame.Migrations
 {
     [DbContext(typeof(GameModelContext))]
-    partial class GameModelContextModelSnapshot : ModelSnapshot
+    [Migration("20180214065202_UpdateCreatedUserAuth")]
+    partial class UpdateCreatedUserAuth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

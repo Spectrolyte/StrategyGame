@@ -11,9 +11,10 @@ using System;
 namespace StrategyGame.Migrations
 {
     [DbContext(typeof(GameModelContext))]
-    partial class GameModelContextModelSnapshot : ModelSnapshot
+    [Migration("20180214060014_AddRequiredFields")]
+    partial class AddRequiredFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,7 +26,9 @@ namespace StrategyGame.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("Created");
+                    b.Property<DateTime>("Created")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.Property<string>("Email")
                         .IsRequired();
@@ -33,7 +36,12 @@ namespace StrategyGame.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
+                    b.Property<Guid>("UserAccountAuthenticationId");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserAccountAuthenticationId")
+                        .IsUnique();
 
                     b.ToTable("UserAccounts");
                 });
@@ -43,7 +51,9 @@ namespace StrategyGame.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("Created");
+                    b.Property<DateTime>("Created")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.Property<string>("EncryptedPassword")
                         .IsRequired();
@@ -51,21 +61,16 @@ namespace StrategyGame.Migrations
                     b.Property<string>("PasswordSalt")
                         .IsRequired();
 
-                    b.Property<Guid>("UserAccountId");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserAccountId")
-                        .IsUnique();
-
-                    b.ToTable("UserAccountAuthentications");
+                    b.ToTable("UserAccountAuthentication");
                 });
 
-            modelBuilder.Entity("StrategyGame.Models.UserAccountAuthentication", b =>
+            modelBuilder.Entity("StrategyGame.Models.UserAccount", b =>
                 {
-                    b.HasOne("StrategyGame.Models.UserAccount", "UserAccount")
-                        .WithOne("UserAccountAuthentication")
-                        .HasForeignKey("StrategyGame.Models.UserAccountAuthentication", "UserAccountId")
+                    b.HasOne("StrategyGame.Models.UserAccountAuthentication", "UserAccountAuthentication")
+                        .WithOne("UserAccount")
+                        .HasForeignKey("StrategyGame.Models.UserAccount", "UserAccountAuthenticationId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

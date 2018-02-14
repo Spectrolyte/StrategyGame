@@ -11,9 +11,10 @@ using System;
 namespace StrategyGame.Migrations
 {
     [DbContext(typeof(GameModelContext))]
-    partial class GameModelContextModelSnapshot : ModelSnapshot
+    [Migration("20180214064421_AddUserAccountAuthentication")]
+    partial class AddUserAccountAuthentication
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,7 +26,9 @@ namespace StrategyGame.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("Created");
+                    b.Property<DateTime>("Created")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.Property<string>("Email")
                         .IsRequired();
@@ -43,7 +46,9 @@ namespace StrategyGame.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("Created");
+                    b.Property<DateTime>("Created")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.Property<string>("EncryptedPassword")
                         .IsRequired();

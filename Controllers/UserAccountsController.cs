@@ -1,7 +1,10 @@
 using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using StrategyGame.Models;
+using StrategyGame.DataTransferObjects;
 
 namespace StrategyGame.Controllers
 {
@@ -22,22 +25,38 @@ namespace StrategyGame.Controllers
 
         [HttpPost]
         [Route("api/UserAccounts/CreateUserAccount")]
-        public UserAccount CreateUserAccount((string name, string email, string password) userAccountData)
+        public Guid CreateUserAccount([FromBody] CreateUserAccountDTO createUserAccountDTO)
         {
+            byte[] salt = new byte[128/8];
+
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+
+            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: createUserAccountDTO.Password,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA1,
+                iterationCount: 10000,
+                numBytesRequested: 256 / 8));
+
             var userAccount = new UserAccount
             {
-                Name = userAccountData.name,
-                Email = userAccountData.email,
+                Name = createUserAccountDTO.Name,
+                Email = createUserAccountDTO.Email,
                 UserAccountAuthentication = new UserAccountAuthentication
                 {
-                    EncryptedPassword = "TODO",
-                    PasswordSalt = "TODO"
+                    EncryptedPassword = hashed,
+                    PasswordSalt = Convert.ToBase64String(salt)
                 }
             };
+
             _context.UserAccounts.Add(userAccount);
+            _context.UserAccountAuthentications.Add(userAccount.UserAccountAuthentication);
             _context.SaveChanges();
 
-            return userAccount;
+            return userAccount.Id;
         }
     }
 }

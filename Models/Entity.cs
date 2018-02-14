@@ -8,7 +8,7 @@ namespace StrategyGame.Models
         [Required]
         public Guid Id { get; set; }
         
-        [Timestamp]
-        public DateTime Created { get; set; }
+        [Required]
+        public DateTime Created { get; set; } = DateTime.Now;
     }
 }
