@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using StrategyGame.Models;
 using StrategyGame.DataTransferObjects;
+using System.Text;
 
 namespace StrategyGame.Controllers
 {
@@ -57,6 +58,33 @@ namespace StrategyGame.Controllers
             _context.SaveChanges();
 
             return userAccount.Id;
+        }
+
+        [HttpGet]
+        [Route("api/UserAccounts/ValidateUserLogin")]
+        public bool ValidateUserLogin (string email, string password)
+        {
+            // retrieve user account info based on email
+            var userAccount =  _context.UserAccounts.SingleOrDefault(ua => ua.Email == email);
+            var userAccountGuid = userAccount.Id;
+            // retrieve password info based on user account guid
+            var hashInfo = _context.UserAccountAuthentications.SingleOrDefault(ua => ua.UserAccount.Id == userAccountGuid);
+            
+            // hash info password with stored salt string
+            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: password,
+                salt: Convert.FromBase64String(hashInfo.PasswordSalt),
+                prf: KeyDerivationPrf.HMACSHA1,
+                iterationCount: 10000,
+                numBytesRequested: 256 / 8));
+
+            // if they match, return true
+            if (hashed == hashInfo.EncryptedPassword)
+            {
+                return true;
+            }
+            
+            return false;
         }
     }
 }
