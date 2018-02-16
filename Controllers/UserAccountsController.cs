@@ -55,7 +55,6 @@ namespace StrategyGame.Controllers
             };
 
             _context.UserAccounts.Add(userAccount);
-            _context.UserAccountAuthentications.Add(userAccount.UserAccountAuthentication);
             _context.SaveChanges();
 
             return userAccount.Id;
