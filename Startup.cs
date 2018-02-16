@@ -30,6 +30,7 @@ namespace StrategyGame
                     .AddJsonOptions(options =>
                     {
                         options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                     });
             services.AddDbContext<GameModelContext>(options => options.UseNpgsql(
                 "Server=TheNorth;Host=localhost;Port=1337;Database=Winterfell;Username=postgres;Password=postgres"
